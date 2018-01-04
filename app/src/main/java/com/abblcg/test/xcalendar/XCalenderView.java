@@ -85,27 +85,54 @@ public class XCalenderView extends LinearLayout {
 
             final int x = i;
 
-            dayView.setOnClickListener(new OnClickListener() {
+            dayView.setExOnClickListener(new ExOnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClickInTheMonth(View v, Calendar calendar) {
+                    showTableItem(dayView);
 
-                    for (int j = 0; j < showDayNum; j++) {
-                        DayView dayView = (DayView) getChildAt(j);
-                        dayView.setTheClickCalendar(null);
-                        dayView.setDefaultColor();
+                    if (onDateChangeListener != null) {
+                        onDateChangeListener.getChooseDay(calendar);
                     }
-                    theClickCalendar = Calendar.getInstance();
-                    theClickCalendar.setTimeInMillis(dayView.getSeftCalendar().getTimeInMillis());
-                    dayView.setTheClickCalendar(theClickCalendar);
-                    dayView.setDefaultColor();
-                    dayView.setClickAction();
+                }
 
-                    Log.i("DayView", TimeUtil.printLogCalendar(theClickCalendar));
+                @Override
+                public void onClickInLastMonth(View v, Calendar calendar) {
+                    showTableItem(dayView);
+                    goToLastMonth();
 
+                    if (onDateChangeListener != null) {
+                        onDateChangeListener.getChooseDay(calendar);
+                    }
+                }
+
+                @Override
+                public void onClickInNextMonth(View v, Calendar calendar) {
+                    showTableItem(dayView);
+                    goToNextMonth();
+
+                    if (onDateChangeListener != null) {
+                        onDateChangeListener.getChooseDay(calendar);
+                    }
                 }
             });
-
         }
+
+        if (onDateChangeListener != null) {
+            onDateChangeListener.getChooseMonth(theCalendar);
+        }
+    }
+
+    private void showTableItem(DayView dayView) {
+        for (int j = 0; j < showDayNum; j++) {
+            DayView dv = (DayView) getChildAt(j);
+            dv.setTheClickCalendar(null);
+            dv.setDefaultColor();
+        }
+        theClickCalendar = Calendar.getInstance();
+        theClickCalendar.setTimeInMillis(dayView.getSeftCalendar().getTimeInMillis());
+        dayView.setTheClickCalendar(theClickCalendar);
+        dayView.setDefaultColor();
+        dayView.setClickAction();
     }
 
     private void initTable() {
@@ -134,6 +161,10 @@ public class XCalenderView extends LinearLayout {
 
         showTable();
 
+        if (onDateChangeListener != null) {
+            onDateChangeListener.getChooseMonth(theCalendar);
+        }
+
     }
 
     public void goToNextMonth() {
@@ -145,6 +176,10 @@ public class XCalenderView extends LinearLayout {
         startCalendar = offsetCalendar(theCalendar);
 
         showTable();
+
+        if (onDateChangeListener != null) {
+            onDateChangeListener.getChooseMonth(theCalendar);
+        }
     }
 
     private void showTable() {
@@ -253,6 +288,12 @@ public class XCalenderView extends LinearLayout {
 
         }
 
+    }
+
+    private OnDateChangeListener onDateChangeListener;
+
+    public void setOnDateChangeListener(OnDateChangeListener onDateChangeListener) {
+        this.onDateChangeListener = onDateChangeListener;
     }
 
 }

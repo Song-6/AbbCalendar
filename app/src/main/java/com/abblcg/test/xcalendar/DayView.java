@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -97,5 +98,20 @@ public class DayView extends RelativeLayout {
         if (theClickCalendar != null) {
             setBackgroundColor(Color.parseColor("#fd7247"));
         }
+    }
+
+    public void setExOnClickListener(final ExOnClickListener exOnClickListener) {
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (seftCalendar.get(Calendar.MONTH) == theMothCalendar.get(Calendar.MONTH)) {
+                    exOnClickListener.onClickInTheMonth(DayView.this, seftCalendar);
+                } else if (seftCalendar.getTimeInMillis() < theMothCalendar.getTimeInMillis()) {
+                    exOnClickListener.onClickInLastMonth(DayView.this, seftCalendar);
+                } else {
+                    exOnClickListener.onClickInNextMonth(DayView.this, seftCalendar);
+                }
+            }
+        });
     }
 }
